@@ -1,0 +1,106 @@
+Differences in Procedure (P) and Function (F):
+
+1) In case of P it may or may not return value.
+    F has to return value. It will return value without Out and In Out parameters.
+
+2) P can be independently called. F cannot get called independently.
+
+3) F can get called in various ways:
+a) Inside PLSQL block.
+b) In Select statement's column list, where, group by, having, order by clauses.
+c) In Update and Delete Statements.
+d) F can assign value to a variable
+P can only be called in PLSQL block. B,C and D are N/A for P.
+
+4) Inside P we should have DML along with code and validations
+    Inside F we should have complex numeric, date, string calculations.
+
+Examples of Function:
+
+create or replace function  increment_salary (p_sal number)
+return number
+as
+begin
+	return (p_sal + p_sal *0.50);
+end;
+
+Test the logic of function using dual table.
+
+select increment_salary(8000) from dual;
+
+Once the answer is correct using dual table then call the function in select statement of your business or project table.
+
+select ename, sal, increment_salary(sal) as "Incremented Salary"
+from emp;
+
+Now call the same function in Insert statement. For that creating table first.
+
+create table new_emp
+(empno number,
+ ename varchar(10),
+ sal number,
+ incremented_sal number);
+
+Insert into new_emp Values(1234, 'John', 10000, increment_salary(10000));
+
+select * from new_Emp;
+
+Example of function having DML statements. Its scope of usage gets restricted....
+
+create or replace function trial (p number)
+return number
+as
+begin
+	Delete From Emp;
+	return 0;
+End;
+
+Function gets created, but now this function cannot be called in Select or DML statements.
+
+select trial(3) from dual; -- Error...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
