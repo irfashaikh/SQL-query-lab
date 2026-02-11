@@ -1,0 +1,362 @@
+Introduction to PLSQL:
+
+Features of PLSQL:
+1) Offers programmability to SQL
+a) Looping
+b) Variables
+c) If Condition, etc.
+
+2) Can handle exceptions, i.e., run time errors. Has Data Validation techniques.
+
+3) Can create user defined functions
+
+4) Can create procedures to handle DML/DDL statements along with complex business logic
+
+5) Can create triggers by which code execution is automatic for DML statements.
+
+6) Has lot of Oracle Supplied Packages
+
+7) Can process one row at a time using technique known as Cursor
+
+8) Can implement Object Oriented Programming
+
+9) Can create user defined data types
+------------------------------------------------------------------------------------
+
+Types of Blocks (piece of code) in PLSQL:
+1) Anonymous Block
+2) Named Block
+
+1) Anonymous Block:
+a) Session specific.
+b) Code not stored in database
+c) Cannot accept parameters
+d) No security offered by Oracle
+e) Useful of logic building, unit testing before actual procedure, functions, triggers and packages are created.
+
+Coding with Anonymous Block (AB):
+
+There are 3 main parts to an AB:
+1) Declare
+2) Begin
+3) Exception
+
+
+1) Declare part is for declaration of variables, cursors, types, exceptions
+
+2) Begin part is for actual code
+
+3) Exception part is for handling run time errors.
+
+Begin is the mandatory part.
+
+Examples:
+1) 
+
+Begin
+	DBMS_Output.Put_Line('Welcome to PL/SQL');
+End;
+
+2)
+Declare
+	v_sal number;
+Begin
+	v_sal := 7000;
+	DBMS_Output.Put_Line(v_sal);
+End;
+
+3) 
+Declare
+	v_marks integer;
+Begin
+	v_marks := 78;
+
+	If v_marks >= 40 Then
+		DBMS_Output.Put_Line('Passed');
+	Else
+		DBMS_Output.Put_Line('Failed');	
+	End If;
+End;
+
+4)
+
+Declare
+	v_marks integer;
+Begin
+	v_marks := 68;
+
+	if v_marks >= 70 then
+		DBMS_Output.Put_Line('Dist');
+	elsif v_marks >= 60 then 
+		DBMS_Output.Put_Line('FC');	
+	elsif v_marks >= 50 then
+		DBMS_Output.Put_Line('SC');	
+	elsif v_marks >= 40 then
+		DBMS_Output.Put_Line('Passed');	
+	else
+		DBMS_Output.Put_Line('Failed');
+	end if;
+End;
+
+5) 
+Declare
+	otp number(4);
+	pid varchar(20);
+Begin
+	otp := 4279;
+	pid := 'Camera';
+
+	if otp = 4279 then
+		if pid = 'Camera' then
+			DBMS_Output.Put_Line('A');
+		else
+			DBMS_Output.Put_Line('B');
+		end if;
+	else
+			DBMS_Output.Put_Line('C');
+	end if;
+End;
+
+
+6)
+Declare
+	v_sal number;
+Begin
+	Select Sal Into v_sal
+	From Emp
+	Where Ename = 'SMITH';
+	
+	DBMS_Output.Put_Line(v_sal);
+End;
+
+7)
+Declare
+	v_sal number;
+Begin
+	Select Sal Into v_sal
+	From Emp;
+	--Where Ename = 'SMITH';
+	
+	DBMS_Output.Put_Line(v_sal);
+End;
+
+8)
+Declare
+	v_sal number;
+Begin
+	Select Sal Into v_sal
+	From Emp
+	Where Ename = 'SMITH123';
+	
+	DBMS_Output.Put_Line(v_sal);
+End;
+
+9) 
+Begin
+	Select * From Emp;
+End;
+
+
+create table empA
+as
+select * from emp;
+
+create table empB
+as
+select * from emp;
+
+create table empC
+as
+select * from emp;
+
+create table empD
+as
+select * from emp;
+
+Begin
+	Delete From empA;
+	Commit;
+End;
+
+
+Begin
+	Update empB set sal = null;
+	Commit;
+End;
+
+Begin
+	Drop Table empC;
+End;
+
+---------------------
+
+Loops in PLSQL:
+There are 3 types of Loops in PLSQL --
+a) Basic
+b) While
+c) For (Special in PLSQL!!!)
+
+1) Basic Loop can be used as Do ... While Loop also.
+
+Examples of Loops:
+
+Declare
+	x number;
+Begin
+	x := 1000;
+	Loop
+		Dbms_Output.Put_Line(x);
+		x := x + 1;
+		Exit When x > 10;
+	End Loop;
+		Dbms_Output.Put_Line('abc');
+End;
+
+
+Declare
+	x number;
+Begin
+	x:= 1;
+	While x <= 10
+	Loop
+		Dbms_Output.Put_Line(x);
+		x := x + 1;
+	End Loop;
+
+End;
+
+Declare
+	x number;
+Begin
+	x:= 1;
+	While x <= 10
+	Loop
+		Dbms_Output.Put_Line(x);
+		x := x + 1;
+		Exit When x = 7;
+	End Loop;
+
+End;
+
+------------------------
+Features of For Loop of PLSQL:
+1) Should not declare the for loop variable
+2) Cannot increment or decrement the counter variable's value. It will be by +1 or -1 only.
+3) No need of Exit When clause to terminate the loop.
+4) Cannot use the for loop variable after the loop gets finished.
+5) The data type of lower and higher counter variable's value is INTEGER only.
+6) CANNOT GO IN INFINITE LOOP!!!!
+
+
+
+Begin
+	For x in 1 .. 10
+	Loop
+		Dbms_Output.Put_Line(x);	
+	End Loop;
+End;
+
+Begin
+	For x in 1 .. 10
+	Loop
+		Dbms_Output.Put_Line(x);	
+		x := x + 1;  -- Error
+	End Loop;
+End;
+
+
+Begin
+	For x  in Reverse 1 .. 10
+	Loop
+		Dbms_Output.Put_Line(x);
+	End Loop;
+End;
+/
+
+Begin
+	For x  in 1 .. 10
+	Loop
+		Dbms_Output.Put_Line(x);
+	End Loop;
+		Dbms_Output.Put_Line(x);
+End;
+
+
+Begin
+	For x  in 1.3 .. 10.7
+	Loop
+		Dbms_Output.Put_Line(x);
+	End Loop;
+
+End;
+
+Sub Query For Loop
+
+Begin
+	For M in (Select * from Emp)
+	Loop
+		Dbms_Output.Put_Line(M.Ename);
+	End Loop;
+End;
+
+---------------------------------------------
+
+Attributes to Data Types:
+1) %Type
+2) %RowType
+
+declare
+        a emp.ename%type;
+        b emp.sal%type;
+        c emp.deptno%type;
+    /* Using %TYPE attribute for variable data type */
+begin
+         select ename,sal,deptno
+         into a,b,c
+         from emp
+         where ename = 'KING';
+         dbms_output.put_line(a ||'-'||  b ||'-' || c);
+  end;
+/
+
+
+
+declare
+	X Emp%RowType;
+begin
+	Select * into X
+	From Emp
+	Where EName = 'SMITH';
+
+	Dbms_Output.Put_Line(X.Ename);
+	Dbms_Output.Put_Line(X.Sal);
+end;
+
+	
+	
+
+
+	
+
+
+			
+		
+
+
+	
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
