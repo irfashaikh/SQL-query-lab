@@ -1,0 +1,135 @@
+Data Validation Techniques - Exceptions Handling:
+
+Exceptions Handling is for handling run time errors.
+
+Two reasons:
+1) To provide user friendly customized error message.
+
+2) To decide what needs to be done when error comes.
+
+-- Code without handling error
+Declare
+	x number;
+Begin
+	Select Sal Into x
+	From Emp;
+	
+	dbms_output.put_line(x);
+
+End;
+
+-- Code with handling error
+Declare
+	x number;
+Begin
+	Select Sal Into x
+	From Emp;
+	
+	dbms_output.put_line(x);
+
+	Exception
+
+		When No_Data_Found Then
+			dbms_output.put_line('Wrong name');
+		When Too_Many_Rows Then
+			dbms_output.put_line('There are multiple values to variable');
+	
+End;
+
+
+Declare
+	x number;
+Begin
+	Select Sal Into x
+	From Emp;
+	
+	dbms_output.put_line(x);
+
+	Exception
+
+		When Others Then
+				dbms_output.put_line(SQLCode);
+				dbms_output.put_line(SQLERRM);
+	
+End;
+
+create table tr1
+(trid int primary key,
+ amount int check(amount > 100)
+);
+
+create table errors
+(record_id int,
+ error_number int,
+ error_message varchar(255)
+);
+
+Insert into tr1 Values(1, 3000);
+commit;
+
+
+declare
+	v_trid int;
+	v_amount int;
+	v_sqlcode number;
+	v_errmessage varchar(255);
+begin
+	v_trid := 1; -- Error
+	v_amount := 400;
+	Insert into tr1
+	Values(v_trid, v_amount);
+
+	Exception
+		When Others Then
+			v_sqlcode := SQLCode;
+			v_errmessage := SQLERRM;
+			Insert into errors
+			Values(2, v_sqlcode, v_errmessage);
+			Commit;
+End;
+
+
+select * from errors;
+
+declare
+	v_trid int;
+	v_amount int;
+	v_sqlcode number;
+	v_errmessage varchar(255);
+begin
+	v_trid := 2; 
+	v_amount := 70; -- Error
+	Insert into tr1
+	Values(v_trid, v_amount);
+
+	Exception
+		When Others Then
+			v_sqlcode := SQLCode;
+			v_errmessage := SQLERRM;
+			Insert into errors
+			Values(1, v_sqlcode, v_errmessage);
+			Commit;
+End;
+
+
+select * from errors;
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

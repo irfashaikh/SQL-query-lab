@@ -1,0 +1,32 @@
+-- Through out Distinction students
+Select Rollno, Student_Name, Grade
+from first_semester
+where Grade ='Distinction'
+Intersect
+Select Rollno, Student_Name, Grade
+from second_semester
+where Grade ='Distinction'
+Intersect
+Select Rollno, Student_Name, Grade
+from third_semester
+where Grade ='Distinction';
+
+-- Through out First Class students
+Select Rollno, Student_Name, Grade
+from first_semester
+where Grade ='First Class'
+Intersect
+Select Rollno, Student_Name, Grade
+from second_semester
+where Grade ='First Class'
+Intersect
+Select Rollno, Student_Name, Grade
+from third_semester
+where Grade ='First Class';
+
+
+
+
+
+
+

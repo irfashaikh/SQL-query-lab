@@ -1,0 +1,45 @@
+1) Union All Set Operator:
+1) Combines the result of select statements.
+2) Will not eliminate duplicates
+3) Will not sort the final output.
+*4) Suitable for displaying a master list of all records or to show all records of multiple tables (or select statements)
+
+2) Union Set Operator:
+1) Combines the result of select statements.
+2) Will eliminate duplicates
+3) Will sort the final output ascending by default even if Order by clause is not there.
+*4) Suitable for displaying a distinct list of values from multiple tables (or select statements)
+
+Rules of Set Operators:
+1) The number of columns in each select statement MUST BE SAME.
+2) Positional columns should be compatible data type wise. If not then should be made compatible using type casting functions.
+3) Order by clause should be used only after the last select statement.
+
+--------------------------
+
+3) Intersect Set Operator:
+1) Combines the result of select statements.
+*2) It will consider ONLY COMMON ROWS from those select statements.
+3) Will eliminate duplicates
+4) Will sort the final output ascending by default even if Order by clause is not there.
+*5) To see the common data in multiple tables
+
+3) Minus Set Operator:
+1) Combines the result of select statements.
+*2) It will consider ONLY ROWS OF FIRST SELECT STATEMENT which are NOT in SECOND STATEMENT.
+3) Will eliminate duplicates
+4) Will sort the final output ascending by default even if Order by clause is not there.
+*5) To see the uncommon data in multiple tables
+
+
+
+
+
+
+
+
+
+
+
+
+
