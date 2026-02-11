@@ -1,0 +1,70 @@
+
+
+with cte as 
+(select ename , sal as salary 
+    from emp 
+    	where sal > 1000)
+select * from cte
+
+
+---------------------------------------------------------- INLINE VIEWS -------------------------------------------------------In oracle --------------------
+-- In oracle known as "Inline views"
+-- In sql server knows as "Derived Tables"
+-- Also known as " Sub Query In from Clause"
+
+select * from (select * from emp)
+
+select sal from (select ename , deptno from emp)        -- ERROR
+
+
+------------------------------------------------------------------- Window Functions ---------------------------------------------------------------------
+
+select ename , sal , max(sal) over() as "Highest salary "         -- 
+from emp;
+
+-- 1. Over() is an analytical function
+	-- Over except an aggregate function(min , max , sum) or an windowing function (Like rank , lead , lag etc)
+	-- It will return the aggregate value for each row without the need by group by clause.
+	-- 
+
+select ename , sal , comm  , nvl (comm , 0) over() from emp        -- The single row function are used as window functions. It will gave error
+
+
+select ename , job , sal , max(sal) over(partition by job ) as "Job Wise Highest"       -- [Over with argument]
+from emp 
+
+
+select continent , country , sales , sum (sales) over(partition by continent , country ) as "Total"      -- Over with multiple arguments.
+from products2;
+
+select ename , sal ,deptno , sum(sal) over(partition by deptno) as "Max salary" from emp
+
+
+select ename , sal , rank() over(order by sal desc) as "salary wise rank" from emp          -- rank Funtion
+
+
+select ename , sal , rank() over() as "salary wise rank" from emp 
+
+
+select ename , sal , dense_rank() over (order by sal desc) as " salary rank" from emp;          -- DENSE RANK function
+
+
+select ename , sal , deptno, dense_rank()
+    over(partition by deptno order by sal desc)
+    from emp
+
+
+-- Ranking Function :
+	-- There are three Ranking Functions :
+		-- 1. Rank 
+		-- 2. Dense_Rank
+		-- 3. Row_number
+
+select ename , sal , Row_number () over(order by sal desc) as " Row Number " from emp;            -- Row_number another Window Function.
+
+
+select row_number() over (order by empno) as "Record Number", emp.* from emp
+
+
+select row_number() over (partition by deptno order by empno) as "Record Number", emp.* from emp
+

@@ -1,0 +1,98 @@
+create or replace view emp_view 
+as 
+select ename , job , mgr, sal
+from emp 
+
+select * from emp_view
+
+select v.ename , e.sal 
+from emp e join emp_view v         --  Joining views and tables in sql using JOINS.
+on e.job = v.job
+
+select * from emp where sal > (select sal from emp where ename ='MARTIN')          -- SubQuery
+
+
+-- Display the name and salary of the highest earner 
+select ename , sal as Highest 
+from emp 
+where sal = (select max(sal) from emp)
+
+
+select * from emp where sal > (select sal from emp where ename ='irfan')
+
+select * from emp where sal in (800,2975,3000,1100,3000)
+
+select * from emp where sal >any (800,2975,3000,1100,3000)
+
+
+
+select * from emp 
+where sal <any (select sal from emp where deptno = 20)
+select deptno ,sal from emp where deptno = 20
+
+
+select * from emp1
+select * from dept1
+
+
+select * from emp1 where deptno not in (select distinct deptno from dept1)
+
+
+select * from emp 
+where exists (select null from dept where deptno = 89)     -- Exists 
+
+
+select * from emp 
+where not exists (select null from dept where deptno = 89)     -- Not Exists -- It is exactly opposite to Exists.
+
+
+    
+create view emp_view if not exists
+as 
+select ename , sal from emp
+
+
+
+select * from India                       -- Set Operators (UNION)
+union all
+select * from Exists (select null from australia)
+
+
+select  pname  from india             -- Set Operator (UNION)
+union 
+select  pname from australia
+
+
+select  pname  from india             -- Set Operator (UNION)
+union 
+select  pname from australia
+order by pname desc
+
+
+select pname from india                -- Set Operator (INTERSECT)
+intersect 
+select pname from australia
+
+
+
+    
+select  pname from india                -- Set Operator (MINUS)
+minus 
+select pname from australia
+
+
+select pname , sum(amount) 
+from australia 
+    group by pname 
+having pname >any '(select distint pname from india               
+				union  
+				select dinstinct pname from australia)'
+
+
+-- how can i get the record of the today's record in the data warehouse 
+
+
+select pname , qty from india 
+union 
+select pname , null from australia
+

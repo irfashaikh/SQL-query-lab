@@ -1,0 +1,180 @@
+
+
+create or replace procedure p1                     -- Procedure Created.   It is like DDL ---> rollback is not rollback the code.
+as 
+	x emp.sal%type;
+begin 
+	select sal into x 
+	from emp 
+	where ename= 'SMITH';
+	DBMS_output.put_line(x);
+
+	exception 
+        	when Others then 
+        		DBMS_output.put_line(SQLERRM);
+end;
+
+execute p1         -- Executing the procedure 
+
+
+create or replace procedure p2 
+as 
+begin 
+	p1;
+end;
+
+execute p2
+
+
+
+
+
+create or replace procedure p3 (p_deptno In number ) 
+as 
+	v_max_sal number ;
+begin
+	select Max(sal) Into v_max_sal 
+	from emp
+	where deptno = p_deptno;
+	DBMS_output.put_line(v_max_sal);
+
+	exception 
+        	when others then
+        			DBMS_output.put_line(SQLERRM);
+end;
+
+execute p3 (50)
+
+
+
+
+create or replace procedure p4 (p_ename IN varchar , p_sal OUT number )      -- parameter doesn't gave size of varchar           
+as 																			-- In is optional.
+begin
+	select sal into p_sal
+	from emp 
+	where ename = p_ename;
+    DBMS_output.put_line(p_sal);
+end;
+-- 		for calling the procedure having the out mode parameter we need to mention a variable at that out mode position.
+
+execute p4 ('SMITH'  , 10 )   -- cannot execute the code with this execution statement.    ---> Gives Error.
+ 
+-- To execute the OUT we need to declare the variable and pass the variable as argument to the procedure block.
+declare 
+	x number ;
+begin
+	p4('SMITH' , X);
+end;
+
+
+
+
+
+create or replace procedure p5 (v_sal in out number )
+as 
+begin 
+	v_sal := v_sal + 50;
+	DBMS_output.put_line(v_sal);
+end;
+
+execute p5 (50);               -- This wil also gave the error.
+ 
+declare                       -- the variable must be initialized  in the IN OUT Mode .
+	x number ;
+begin 
+	x := 50;
+	p5(x);
+end;
+
+
+
+
+
+-- Example Of Having complex condition while inserting new record :
+-- Add a new record in the nemp table . Ensure that the new record salary should not exceed the highest salary of emp table.
+
+create or replace procedure p6 (p_empno number , p_ename varchar , p_sal number)
+as 
+	v_max_sal number ;
+begin
+	select max (sal) into v_max_sal from emp;
+
+	if p_sal > v_max_sal then
+		DBMS_output.put_line('salary wrong !!!');
+	else
+		insert into emp (empno , ename , sal)
+		values (p_empno , p_ename , p_sal);
+		commit;
+		DBMS_output.put_line('salary inserted !!!');
+	end if;
+end;
+
+execute p6(1 , 'a' , 7000);
+execute p6(2, 'b' , 4000);  
+
+
+
+
+
+create or replace procedure p7 (p_job varchar default 'CLEARK')            -- default parameter in procedures.
+as 
+    v_total number ;
+begin
+	select sum(sal) into v_total 
+	from emp
+	where job = p_job;
+	DBMS_output.put_line('HI !!!');
+
+end;
+execute p7()
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Create or replace function f1 (p_sal number)                -- Function Creation 
+return number                                                -- Function have 2 return statements --> 1. At the creation block
+as 																								  ---> 2. At the end of the begin block
+begin
+	return (p_sal + p_sal * 0.50);
+end;
+
+-- test The logic of function on dual table.
+select f1 (800) from dual;                           -- Execution of the function.
+
+select ename , sal , f1(sal) as "Incremented salary" from emp;
+
+
+
+
+
+create table new_emp
+(empno number ,
+	ename varchar (20) ,
+    sal number ,
+    new_sal number )
+
+
+Insert into new_emp values (1234 , 'JOHN' , 1000 , f1(1000));               -- Use of function while Inserting a records.
+
+select * from new_emp;
+
+
+
+--Note :-
+	-- A procedure is not called in function if procedure have a DML statements in SQL server but in oracle it is possible but not run.
+
+-------------------------------------------------------------------- Triggers -----------------------------------------------------------------------------
+
+
+-- Triggers is a peice of code which is implicitly gets executed on the DML Events.
+
+-- SCenarios of when to use Triggers :
+-- 1. Adding Newly inserted into other table.
+-- 2. Programmatically taking backup of deleted rows.
+-- 3. Implementing SCD (Type 4) for maintaining old values before update.
+-- 4. To securely perform DML operations based on DAY / DATE / TIME /USER or also on business condition .so triggers can do calidations before DML is done.
+-- 5. To perform DMl on a complex view which is based on join conditions of 2 table.
+

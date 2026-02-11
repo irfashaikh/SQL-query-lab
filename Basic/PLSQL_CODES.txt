@@ -1,0 +1,314 @@
+BEGIN
+		DBMS_output.put_line ('Hello , World');       -- Printing Hello world 
+END;
+
+
+
+Declare 
+	v_sal number;                 -- Creating a variable and assigning a value
+Begin
+	v_sal := 7000;
+	DBMS_output.put_line(v_sal);
+end;
+
+
+
+Declare 
+	v_sal number := 7000;                 -- Another Way Of Creating a variable and assigning a value
+Begin
+	DBMS_output.put_line(v_sal);
+end;
+
+
+
+
+
+declare                                    -- If -else Condition in PLSQL
+	v_marks integer ;
+Begin 
+	v_marks := 35;
+	if v_marks >= 80 then 
+		DBMS_output.put_line('Pede de BC');
+	elsif v_marks >= 40 then
+		DBMS_output.Put_Line('pass BC');
+	else 
+		DBMS_output.put_line('khada hu aaj bhi wahi !!!');
+	end if;
+end;
+
+ 
+
+
+
+declare                                             -- Nested IF Statements.
+	pid number (4);
+    otp number (20);
+begin
+	otp := 4279;
+	pid := 'camera';
+
+	if otp = 4279 then
+		if pid = 'camera' then 
+				DBMS_output.Put_Line('A');
+		else
+				DBMS_output.Put_Line('B');
+		end if;
+	else 
+			DBMS_output.Put_Line('C');
+	end if ;
+end;
+
+	
+declare 
+	v number 
+begin
+    -- DBMS_output.Put_Line('Enter value : ');
+	v := &v;
+	DBMS_output.Put_Line(v);
+end;
+
+
+declare 
+	v number ;
+begin
+	select sal into v from emp 
+    where ename = 'SMITH';
+	DBMS_output.Put_Line(v);
+end;
+
+
+
+begin
+	select * from emp ;             -- INTO is required in PLSQL. This code return error.
+end;
+
+
+
+create table empA
+as 
+select * from emp;
+
+create table empB
+as 
+select * from emp;
+
+create table empC
+as 
+select * from emp;
+
+
+begin                                      -- Delete Using PLSQL
+	delete from empA;
+	commit;
+end;
+select * from empA;
+
+
+
+
+begin                                             -- Update the table using PLSQL
+	update empB set sal = null;
+end;
+select * from empB;
+
+
+
+
+declare                                    -- Giving the input from the user using (&).
+    	c number 
+begin
+    c := &c;
+    DBMS_output.put_line(c);
+end;
+
+
+ 
+Begin                               -- you can not have DDL command directly in PLSQL 
+	drop table empC;
+end;
+-- DML and DCL are directly possible in PLSQL.
+
+
+----------------------------------------------------- Looping -------------------------------------------------------------------------------
+
+Declare                                       -- DO-WHILE Loop
+	x number ;
+Begin
+	x := 1;
+	loop 
+	    DBMS_output.put_line(x);
+		x := x+1;
+    	Exit When x >10;
+	end loop;
+    DBMS_output.put_line('abc');
+end;
+
+
+
+
+Declare                                         -- While Loop 
+	x number;
+begin 
+	x := 1;
+	while x <= 10
+	loop 
+	    DBMS_output.put_line(x);
+		x := x + 1;
+	end loop;
+end;
+
+
+
+begin                                            -- FOR Loop with increment.
+	for x in 1 .. 10
+	loop 
+        DBMS_output.put_line(X);
+	    DBMS_output.put_line('hi');
+	end loop;
+end;
+
+
+
+begin                                             -- for loop with decrement.
+	for x in reverse 1 .. 10
+	loop 
+        DBMS_output.put_line(X);
+	end loop;
+end;
+
+
+
+begin                                             -- for loop with decrement.
+	for x in  1 .. 10
+	loop 
+        DBMS_output.put_line(X);
+	end loop;
+	     DBMS_output.put_line(X);                 -- the scope of x variable is only upto for loop --> it gaves error.(X is not declared).
+end;
+
+
+
+begin                                             -- for loop with decrement.
+	for x in 1.3 .. 10.5
+	loop 
+        DBMS_output.put_line(X);
+	end loop;
+end;
+
+
+
+
+begin
+	for M in (select * from emp order by ename desc)                     -- Sub-Query.in For Loop.
+	loop 
+	        DBMS_output.put_line(M.ename);
+	end loop;
+end;
+
+
+
+
+declare 
+	a emp.ename%type;
+	b emp.sal%type ;
+	c emp.deptno%type;
+begin
+	select ename, sal , deptno
+	into a, b, c
+	from emp
+	where ename = 'KING';
+	DBMS_output.put_line( a || '-' || b || '-' || c);
+end;
+
+
+
+
+declare 
+	x emp%RowType;                         -- X is a composite variable here.
+begin
+	select * into x 
+    from emp 
+    where ename ='SMITH';
+	DBMS_output.put_line( x.ename || '-' || x.sal || '-' || x.deptno);
+end;
+
+
+
+
+----------------------------------------------------- Data Validation Technique - Exception Handling -----------------------------------------------------
+
+declare                              -- Code with out Error Handling
+	x number ;
+begin
+	select sal into x 
+	from emp;
+	DBMS_output.put_line(x);
+end;
+
+
+
+
+declare                                     -- Code with Error Handling
+	x number ;
+begin
+	select sal into x 
+	from emp;
+	DBMS_output.put_line(x);
+	exception
+        	when too_many_rows then 
+        			DBMS_output.put_line('There are multiple values to variable');
+        	when no_data_found then 
+        			DBMS_output.put_line('data not found');
+end;
+
+
+
+
+declare                                     -- Best Practise of Error Handling. 
+	x number ;
+begin
+	select sal into x from emp;
+    DBMS_output.put_line(x);
+	exception
+		when other then 
+        	    DBMS_output.put_line(SQLCode);
+        	    DBMS_output.put_line(SQLERRM);
+end;
+
+
+
+
+-- Example 
+create table tr1                                    -- create transaction table
+(trid int primary key , 
+    amount int check (amount > 100));
+
+
+create table erors                            -- create error table
+(recid int ,
+    errno int ,
+    errmg varchar (255));
+
+insert into tr1 values (1 , 3000);                        -- 1 record inserted.
+
+
+declare 
+	v_id int ;
+	v_amount int ;
+	m 
+    n
+begin
+	v_id := 1;
+	v_amount := 400;
+
+	insert into tr1 
+	values(v_id , v_amount);
+
+	exception 
+		when other then
+        	m :=  ;
+        	n :=  ;
+			insert into errors 
+			values ( 1 , m  , n);
+			commit;
+end;

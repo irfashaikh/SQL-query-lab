@@ -1,0 +1,53 @@
+create or replace view emp_view 
+as 
+select ename , job , mgr, sal
+from emp 
+
+select * from emp_view
+
+select v.ename , e.sal 
+from emp e join emp_view v         --  Joining views and tables in sql using JOINS.
+on e.job = v.job
+
+select * from emp where sal > (select sal from emp where ename ='MARTIN')          -- SubQuery
+
+
+-- Display the name and salary of the highest earner 
+select ename , sal as Highest 
+from emp 
+where sal = (select max(sal) from emp)
+
+
+select * from emp where sal > (select sal from emp where ename ='irfan')
+
+select * from emp where sal in (800,2975,3000,1100,3000)
+
+select * from emp where sal >any (800,2975,3000,1100,3000)
+
+
+
+select * from emp 
+where sal <any (select sal from emp where deptno = 20)
+select deptno ,sal from emp where deptno = 20
+
+
+select * from emp1
+select * from dept1
+
+
+select * from emp1 where deptno not in (select distinct deptno from dept1)
+
+
+select * from emp 
+where exists (select null from dept where deptno = 89)     -- Exists 
+
+
+select * from emp 
+where not exists (select null from dept where deptno = 89)     -- Not Exists -- It is exactly opposite to Exists.
+
+
+    
+create view emp_view if not exists
+as 
+select ename , sal from emp
+

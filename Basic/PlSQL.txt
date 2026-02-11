@@ -1,0 +1,248 @@
+Introduction to PL-SQL :-
+
+	* Features of PLSQL:
+		1. Offers programmability
+		2. Looping 
+		3. Variables
+		4. If Condition 
+
+	* can Handle exceptions i.e , Run time error .Has data validation technique
+	* Can create user defined functions 
+	* Can create procedure to handle DML/DDL statements along with complex business logic
+	* Can create triggers by which code execution for DML statements
+	* Has Alot of oracle supplied packages.
+	* Can Process one row at a time using technique known as cursors.
+	* Can Implement Object Oriented programming.
+	* Can 
+----------------------------------------------------------- Types of Blocks (Piece of code ) in PLSQL -----------------------------------------------------
+
+	1. Anonymous Blocks :
+	2. Named Blocks :
+
+	
+	# Anonymous Blocks :-
+		session Specific 
+		Code not stored in database 
+		cannot accept parameters 
+		no security offered by oracle 
+		Useful of logic building , unit testing before actual procedure , functions , triggers and packages are created.
+
+
+
+# Coding With Anonymous Block (AB) :
+	there are 3 main parts to an AB:
+		1.Declare
+		2.Begin
+		3.Exception
+
+	Declare part is for declaration of variable , Cursors , Types , Exception
+	Begin part is for actual code
+	Exception part is for handling run time error 
+	Begin is the mandatory 
+
+	
+
+	Packages In Oracles :
+		1. DBMS_output.put_line ("Hello , World");        ---> DBMS_output is a Package provided by oracle.
+
+
+EG. 
+	BEGIN
+		DBMS_output.put_line ("Hello , World");
+	END
+
+
+
+------------------------------------------------------------------ Looping ----------------------------------------------------------------------------
+
+	# Loops in SQL :
+		* there are 3 types of loop in PLSQL 
+		1.BASIC 
+		2.WHILE
+		3.FOR (Special in PLSQL )
+		
+		
+		* Basic can be used DO-While Loop also.
+
+
+
+	# Features of FOR Loops :
+		1. Should not declare the loop variable.
+		2. Cannot Increment or decrement the counter variable it will be +1 and -1 only.
+		3. No need of exit when clause to terminate the loop.
+		4. Cannot use the for loop variable after the loop gets finished.
+		5. the data types of lower and higher counter's value is INTEGER only.
+		6. CANNOT GO IN INFINITE LOOP !!!
+
+
+	# Sub-Query For Loop :-
+		begin
+			for M in (select * from emp order by ename desc)                     -- Sub-Query.in For Loop.
+			loop 
+	        		DBMS_output.put_line(M.ename);
+			end loop;
+		end;
+
+
+
+---------------------------------------------------------------- Attribute to data type ----------------------------------------------------------------
+
+
+	%Type:-
+		EG. declare 
+			a emp.ename%type;
+			b emp.sal%type ;
+			c emp.deptno%type;
+		begin
+			select ename, sal , deptno
+			into a, b, c
+			from emp
+			where ename = 'KING';
+			DBMS_output.put_line( a || '-' || b || '-' || c);
+		end;
+
+
+
+	%RowType :-
+
+		declare 
+			x emp%RowType;
+		begin
+			select * into x 
+    			from emp 
+    			where ename ='SMITH';
+			DBMS_output.put_line( x.ename || '-' || x.sal || '-' || x.deptno);
+		end;
+
+			
+
+		
+
+---------------------------------------------------------- Data Validation Technique - Exception Handling --------------------------------------------------
+
+	 # Exceptions Handling is for handling run time errors.
+	 
+	Two Reasons :-
+		1. To provide user friendly customized error message.
+		2. To decide what need to be done when error comes.
+
+
+
+
+	# SQL code build in gives you runtime error number 
+	# SQL ERRM gives you the text message of the error 
+
+			
+			
+----------------------------------------------------------------------- Named Blocks ----------------------------------------------------------------------
+
+	* The code gets saved in the databases.
+	* It is reusable 
+	* The code is secured. unless privileges are given no other user can execute that code.
+	* Are parameterized.
+	** Code is stored in compiled format.
+
+
+`	# Procedure (Stored Procedure) :-
+		-- An procedure can call by two ways :
+
+			1. Independently
+			2. Inside an PLSQL Block
+		
+		To call Independently use the keyword execute
+		To call inside an PLSQL block do NOT mention execute. Only Procedure name to be mentioned.
+
+
+	# Parameters to a procedure :
+		There are 3 modes of parameter 
+			1. In (Default)
+			2. Out
+			3. In Out
+
+
+	# Out Mode:
+		useful when the procedure wants to return a value . It will return value to the out mode parameter.
+		for calling the procedure having the out mode parameter we need to mention a variable at that out mode position.
+
+
+
+
+	# In Out Mode:-
+		We will supply the value through parameter . procedure will change that value and then the procedure will return the changed value.
+
+
+## Example :
+-- Example Of Having complex condition while inserting new record :
+-- Add a new record in the nemp table . Ensure that the new record salary should not exceed the highest salary of emp table.
+
+
+
+create or replace procedure p6 (p_empno number , p_ename varchar , p_sal number)
+as 
+	v_max_sal number ;
+begin
+	select max (sal) into v_max_sal from emp;
+
+	if p_sal > v_max_sal then
+		DBMS_output.put_line('salary wrong !!!');
+	else
+		insert into emp (empno , ename , sal)
+		values (p_empno , p_ename , p_sal);
+		commit;
+		DBMS_output.put_line('salary inserted !!!');
+	end if;
+end;
+
+execute p6(1 , 'a' , 7000);
+execute p6(2, 'b' , 4000);  
+
+
+
+
+-------------------------------------------------------------- Functions -----------------------------------------------------------------
+
+	Difference between procedure and Functions :
+		*In case of P it may or may not retuen values.
+		 F has to return value . It will return value without OUT and IN OUT parameters.
+
+		*P can be independently called. F cannot gets called independently.
+
+		*F can get called in various ways;
+			Inside PLSQL Blocks.
+			In select statements column list , Where , Group By , Having , order by clauses.
+			In Update and Delete statements.
+			F can assign values to a variable.
+			P can only be called in PLSQL block. B , C and D are not applicable for Procedures.
+		
+		* Inside P we should have DML along with code and validations.
+		  Inside F we should have complex numeric , date , string calculations.
+
+
+
+--------------------------------------------------------- triggers ------------------------------------------------------------------------
+
+-- Triggers is a piece of code which is implicitly gets executed on the DML Events.
+
+-- Scenarios of when to use Triggers :
+-- 1. Adding Newly inserted into other table.
+-- 2. Programmatically taking backup of deleted rows.
+-- 3. Implementing SCD (Type 4) for maintaining old values before update.
+-- 4. To securely perform DML operations based on DAY / DATE / TIME /USER or also on business condition .so triggers can do calidations before DML is done.
+-- 5. To perform DMl on a complex view which is based on join conditions of 2 table.
+
+
+
+Types of triggers :
+	1. Based on Timing of DML Event 
+	2. Based on Execution
+
+	#  Based on Timing of DML Event :
+		1. After DML 
+		2. Before DML
+
+	# Based on Execution:-
+		1. Row level 
+		2. Statements level or AKA Table level (default)
+
+		# Row Level :
+			The triggers code gets executed for each row affected by the DML statements.
