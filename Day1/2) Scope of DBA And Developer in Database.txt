@@ -1,0 +1,9 @@
+Scope of DBA And Developer in Database:
+
+DBA controls the database at the "Physical" Level.
+
+Developer controls the database at the "Logical" Level.
+
+
+
+
