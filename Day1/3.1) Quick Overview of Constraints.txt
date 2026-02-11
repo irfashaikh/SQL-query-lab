@@ -1,0 +1,5 @@
+1) Composite Keys
+2) PK vs UK
+3) FK
+4) NN
+5) Ch

@@ -1,0 +1,8 @@
+Types of SQL Commands:
+
+1) DDL -- Create, Alter, Drop, Truncate
+2) DML -- Insert, Update, Delete and Merge (aka Upsert)
+3) DQL -- Select
+-------------------------------------
+4) TCL -- Commit, Rollback, Savepoint
+5) DCL -- Grant, Revoke
