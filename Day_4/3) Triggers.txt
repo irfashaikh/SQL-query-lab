@@ -1,0 +1,125 @@
+Trigger is a piece of code which implicitly gets executed on DML events.
+
+Scenarios of when to use triggers:
+1) Adding newly inserted rows into other table.
+2) Programmatically taking backup of deleted rows.
+3) Implementing SCD (Type 4) for maintaining old values before update.
+4) To securely perform DML operations based on Day / Date / Time / User or also on business conditions. So triggers can do validations before DML is done.
+5) To perform DML on a complex view which is based on join condition of 2 tables.
+
+Types of Triggers in Oracle:
+1) Based on Timing of DML Event
+And
+2) Based on Execution
+
+1) Based on Timing of DML Event:
+a) After DML
+b) Before DML
+
+2) Based on Execution
+a) Row Level
+b) Statement Level or aka Table Level (Default)
+
+a) Row Level: The trigger code gets executed for each row affected by the DML statement.
+E.g. if 7 rows are deleted then 7 times the trigger code gets executed.
+
+b) Statement Level or aka Table Level: The trigger code gets executed ONLY ONCE for that DML statement.
+E.g. Even if 7 rows are deleted, still trigger code gets executed ONLY ONCE.
+
+Bind Variables for Row Level Triggers:
+1) :new
+2) :old
+Through these variable we can keep track of every row getting affected by the DML statement.
+
+1) :New is applicable for Insert and Update (for changed value)
+2) :Old is applicable for Delete and Update (for old value)
+
+Examples:
+
+E.g. of Row Level Trigger 
+
+Whenever a record is deleted from emp table then that record's ename and sal should be added in other table.
+
+create table delete_emp
+as
+select ename,sal
+from emp
+where 1 = 2;
+
+select * from delete_emp; -- Empty
+
+create or replace trigger trig_b_1
+After Delete On Emp
+For Each Row
+Begin
+	Insert into delete_emp
+	Values(:old.ename, :old.sal);
+End;
+
+Cross check:
+Delete From Emp Where Ename = 'SMITH';
+
+select * from delete_emp;
+
+E.g. of Statement Level Trigger 
+
+Records should not get inserted in Emp table.
+
+
+create or replace trigger trig_b_2
+Before Insert On Emp
+Begin
+	raise_application_error(-20001,'Cannot insert record in Emp table');
+End;
+
+Cross check:
+Insert into Emp (Empno, Ename) Values(78,'z');  -- Error, not possible
+
+drop trigger  trig_b_2;
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

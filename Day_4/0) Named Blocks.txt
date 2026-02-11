@@ -1,0 +1,7 @@
+Named Blocks:
+
+1) The code gets saved in the database.
+2) It is reusable code!!
+3) The code is secured. Unless privileges are given no other user can execute that code.
+4) Are parameterized!!
+**5) Code is stored in the compiled format.

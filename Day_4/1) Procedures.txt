@@ -1,0 +1,215 @@
+Procedure or Stored Procedure (SP):
+
+E.g. 1
+create or replace procedure p1
+as
+	v_sal Emp.Sal%type;
+begin
+	Select Sal Into v_sal
+	From Emp
+	Where ename = 'SMITH';
+
+	dbms_output.put_line(v_sal);
+
+	Exception
+		When Others Then
+		dbms_output.put_line(SQLERRM);
+end;
+
+------------------------------------------------------------
+An procedure can be called by 2 ways:
+1) Independently
+Or
+2) Inside an PLSQL block
+
+
+To call Independently use the keyword Execute
+
+Execute p1
+
+To call inside an PLSQL block do NOT mention Execute. Only procedure name to be mentioned.
+
+create or replace procedure p2
+as
+begin
+	p1;
+end;
+
+Parameters to a Procedure:
+There are 3 modes of parameters -- 
+a) In  (Default)
+b) Out
+c) In Out
+
+Example of In mode:
+
+create or replace procedure p2 (p_deptno In Number)
+as
+	v_max_sal number;
+begin
+	Select Max(Sal) Into v_max_sal
+	From Emp
+	Where deptno = p_Deptno;
+	dbms_output.put_line(v_max_sal);
+end;
+
+Out mode of parameter:
+Useful when the procedure wants to return a value. It will return value to the Out mode parameter.
+
+
+create or replace procedure p3 (p_ename Varchar, p_sal OUT Number)
+as
+begin
+	Select Sal Into p_sal
+	From Emp
+	Where Ename = p_ename;
+	dbms_output.put_line(p_sal);
+end;
+
+For executing the procedure having Out mode parameter, we need to mention a variable at that Out mode position.
+
+declare
+	x number;
+begin
+	p3('SMITH', x);
+end;
+
+In Out Mode:
+We will supply a value through parameter. Procedure will change that value. And then the procedure will return the changed value.
+
+
+create or replace procedure p4(v_sal In Out Number)
+as
+begin
+	v_sal := v_sal + 500;
+	dbms_output.put_line(v_sal);
+end;
+
+For In Out mode as well we need variable while executing the procedure. Only here it will be an initialized variable.
+
+declare
+	x number;
+begin
+	x := 4000;
+	p4 (x);
+end;
+
+To see the source code the procedure:
+select text
+from user_source
+where name = 'P4';
+
+Example of having complex condition while inserting new record:
+
+Add a new record in emp table. Ensure that the new record's salary should not exceed the highest salary of emp table.
+
+create or replace procedure p5(p_empno number, p_ename varchar, p_sal number)
+as
+	v_max_sal number;
+begin
+	select max(sal) into v_max_sal
+	from emp;
+
+	if p_sal > v_max_sal then
+		dbms_output.put_line('Salary is wrong');
+	else
+		Insert Into Emp (Empno, Ename, Sal)
+		Values(p_empno, p_ename, p_sal);
+		Commit;
+		dbms_output.put_line('Record added');
+	end if;
+end;
+
+Exec p5 (1, 'a', 7000);
+
+Exec p5 (1, 'a', 4000);
+
+select * from emp; -- Cross checking
+
+--------------
+User Defined Exception in procedure:
+
+
+create or replace procedure p5_2(p_empno number, p_ename varchar, p_sal number)
+as
+	v_max_sal number;
+	ex exception;
+begin
+	select max(sal) into v_max_sal
+	from emp;
+
+	if p_sal > v_max_sal then
+		raise ex;
+	else
+		Insert Into Emp (Empno, Ename, Sal)
+		Values(p_empno, p_ename, p_sal);
+		Commit;
+		dbms_output.put_line('Record added');
+	end if;
+	---
+	----
+
+	Exception
+		When ex then
+		dbms_output.put_line('Wrong Salary');
+end;
+
+-------------------------------
+
+Default values to the parameter
+
+create or replace procedure p6 (p_job varchar Default 'CLERK')
+as
+	v_total_sal number;
+begin
+	select sum(sal) into v_total_sal
+	from emp
+	where job = p_job;
+	dbms_output.put_line(v_total_sal);
+end;
+
+Execute procedure without passing parameter, it will still work!!
+
+exec p6
+
+exec p6('MANAGER')
+
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+	 
+	
+
+	
+
+
+
+
+
+
+
+
